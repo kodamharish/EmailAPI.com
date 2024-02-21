@@ -196,3 +196,74 @@ def index(request):
 
 #     return HttpResponse("Excel sheet updated successfully.")
 
+
+import os
+import pandas as pd
+import requests
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.conf import settings
+
+class ExportExcelAPIView(APIView):
+    def post(self, request):
+        # Fetch data from EMP API
+        #emp_api_url = 'http://164.52.194.120:8111/slabmaster_by_slabname_subtenantcode/residential/demo/'  # Replace this with your actual EMP API URL
+        emp_api_url = 'http://164.52.194.120:8111/consumer_by_house_no/1234/'  # Replace this with your actual EMP API URL
+
+        response = requests.get(emp_api_url)
+        
+        if response.status_code == 200:
+            emp_data = response.json()
+            
+            # Convert JSON data to pandas DataFrame
+            df = pd.DataFrame(emp_data)
+
+            # Create a writer object for Excel
+            save_path = os.path.join(settings.BASE_DIR, 'static', 'files', 'NewEmployee.xlsx')
+            writer = pd.ExcelWriter(save_path, engine='xlsxwriter')
+            df.to_excel(writer, index=False, sheet_name='Employee Data')
+
+            # Close the ExcelWriter (this should automatically save the Excel file)
+            writer.close()
+            # Check the content type of the request
+            if 'application/json' in request.content_type:
+                serializer = EmailSerializer(data=request.data)
+            else:
+                serializer = EmailSerializer(data=request.data)
+
+
+            if serializer.is_valid():
+                to_email = serializer.validated_data['to_email']
+                subject = serializer.validated_data['subject']
+                message = serializer.validated_data['message']
+
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                to=[to_email],
+            )
+
+            static_files_folder = os.path.join(BASE_DIR, 'static', 'files')
+
+
+            # Iterate through files in the folder and attach Excel files
+            for file_name in os.listdir(static_files_folder):
+                if file_name.endswith('.xlsx'):
+                    file_path = os.path.join(static_files_folder, file_name)
+                    with open(file_path, 'rb') as file:
+                        file_data = file.read()
+                    email.attach(file_name, file_data)
+
+            email.send(fail_silently=False)
+
+            # Email the Excel file
+            #self.send_email(save_path)
+
+            return Response({'message': 'Excel file generated and emailed successfully!'})
+        else:
+            return Response({'error': 'Failed to fetch data from EMP API'}, status=500)
