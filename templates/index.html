@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Email API</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .input-form {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .input-form input[type="email"],
+    .input-form input[type="text"],
+    .input-form textarea {
+      flex: 1;
+      /* Take up remaining space */
+      padding: 10px;
+      margin-right: 10px;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      /* Add bottom border to the input fields */
+      border-radius: 0;
+      width: 100%;
+    }
+
+    .input-form input[type="email"]:focus,
+    .input-form input[type="text"]:focus,
+    .input-form textarea:focus {
+      border-bottom: 1px solid #ccc;
+      /* Keep the bottom border when input fields are focused */
+      outline: none;
+      /* Remove the default focus outline */
+    }
+
+    .input-form input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      /* Remove border from submit button */
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+  .input-form input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+  
+  </style>
+
+</head>
+
+<body>
+
+
+
+
+
+
+  <div class="container mt-5">
+
+
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+      <i class="fas fa-pen mr-5">
+        
+        Compose
+
+      </i>
+    </button>
+
+    
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h6 class="modal-title">New Message</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body text-center">
+            <div class="input-form">
+              <form action="send_email" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <input type="email" name="to_email" placeholder="To">
+                <input type="text" name="subject" placeholder="Subject">
+
+                <textarea name="message" rows="6" cols="6" placeholder="Message" class="mb-3"></textarea>
+
+                <input type="file" name="files" multiple>
+
+
+            </div>
+
+            <button class="btn btn-primary mt-5" type="submit">Send Mail</button>
+            </form>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <table class="table table-bordered mt-5">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Phone Number</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in Emp %}
+        <tr>
+          <form method="post" action="send_email">
+            {% csrf_token %}
+
+            <td><input type="text" name="subject1" value="{{e.id}}" readonly></td>
+            <td><input type="text" name="message1" value="{{e.name}}" readonly></td>
+            <td><input type="email" name="to_email1" value="{{e.email}}" readonly></td>
+            <td><input type="address" name="eaddress" value="{{e.address}}" readonly></td>
+            <td><input type="number" name="ephno" value="{{e.phoneno}}" readonly></td>
+            <!-- <td><a href="{% url 'index' %}">Send Mail</a></td> -->
+            <td><button type="submit">Send Mail</button></td>
+
+
+
+          </form>
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- <form method="post" action="send_email">
+    {% csrf_token %} 
+<input type="email" name="to_email" placeholder="enter email">
+<input type="text" name="subject" placeholder="enter subject">
+<input type="text" name="message" placeholder="enter message">
+
+<button type="submit">submit</button>
+
+</form> -->
+
+
+
+
+
+
+
+
+</body>
+
+</html>
