@@ -66,7 +66,7 @@ class APISendMail(APIView):
             # Convert JSON data to pandas DataFrame
             df = pd.DataFrame(emp_data)
             # Create a writer object for Excel
-            save_path = os.path.join(settings.BASE_DIR, 'static', 'files', 'API Data.xlsx')
+            save_path = os.path.join(settings.BASE_DIR, 'static', 'Data', 'API Data.xlsx')
             writer = pd.ExcelWriter(save_path, engine='xlsxwriter')
             df.to_excel(writer, index=False, sheet_name='Employee Data')
             # Close the ExcelWriter (this should automatically save the Excel file)
@@ -76,7 +76,7 @@ class APISendMail(APIView):
                 body=message,
                 to=[to_email],
             )
-            static_files_folder = os.path.join(BASE_DIR, 'static', 'files')
+            static_files_folder = os.path.join(BASE_DIR, 'static', 'Data')
             # Iterate through files in the folder and attach Excel files
             for file_name in os.listdir(static_files_folder):
                 if file_name.endswith('.xlsx'):
