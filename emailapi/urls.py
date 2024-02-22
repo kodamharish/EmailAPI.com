@@ -3,7 +3,7 @@ from django.urls import path,include
 from .views import *
 urlpatterns = [
     path('',index,name='index'),
-    path('send_email',SendEmail.as_view(), name='send_email'),
-    path('export/', ExportExcelAPIView.as_view(), name='export-excel-view'),
+    path('form_data_send_mail',FormDataSendEmail.as_view(), name='form_data_send_mail'),
+    path('api_send_mail',APISendMail.as_view(), name='api_send_mail'),
     
 ]
