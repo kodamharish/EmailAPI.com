@@ -1,34 +1,31 @@
 from rest_framework.serializers import ModelSerializer
 from .models import *
-from django.core.mail import send_mail
+
 from rest_framework import serializers
+import json
 
 
-class EmployeeSerializer(ModelSerializer):
-    class Meta:
-        model= Employee
-        fields='__all__'
+
     
-    
+class JSONDataSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=100)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=15)
+
+
 
 class EmailSerializer(serializers.Serializer):
     to_email = serializers.EmailField()
     subject=serializers.CharField()
     message=serializers.CharField()
-    api = serializers.CharField(required=False)
-    #file=serializers.FileField()
-    #file = serializers.FileField(required=False)
-    #files = serializers.ListField(child=serializers.FileField(), required=False)
+    api = serializers.URLField(required=False) #Validates that the provided data is a URL
+    jsondata = serializers.ListField(required=False,child=JSONDataSerializer())
 
+
+    
     
 
 
 
 
-#payload
-# {
-#     "name": "Harish",
-#     "email": "kodam846@gmail.com",
-#     "subject": "Hello",
-#     "message": "Test message"
-# }
